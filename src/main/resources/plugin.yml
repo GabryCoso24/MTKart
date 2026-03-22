@@ -4,3 +4,7 @@ name: MTKart
 author: gabrycoso
 api-version: 1.13
 soft-depend: [PlaceholderAPI]
+commands:
+  start-race:
+    description: Start Race Command
+    usage: /start-race

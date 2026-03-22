@@ -1,8 +1,11 @@
 package com.ideovision;
 
+import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
-import com.ideovision.managers.PluginManager;
+
+import com.ideovision.commands.StartRaceCommand;
 import com.ideovision.listeners.PlayerListener;
+import com.ideovision.managers.PluginManager;
 
 public class MTKart extends JavaPlugin {
     
@@ -15,12 +18,13 @@ public class MTKart extends JavaPlugin {
         // Register listeners
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         
-        getLogger().info("MTKart has been enabled!");
+        getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[MTKart] enabled");
+        getCommand("start-race").setExecutor(new StartRaceCommand());
     }
 
     @Override
     public void onDisable() {
-        getLogger().info("MTKart has been disabled!");
+        getServer().getConsoleSender().sendMessage(ChatColor.RED + "[MTKart] disabled");
     }
     
 }

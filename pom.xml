@@ -31,6 +31,12 @@
             <version>1.21.10-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+    
+      <dependency>
+        <groupId>io.github.shiruka</groupId>
+        <artifactId>chat</artifactId>
+        <version>2.3.2</version>
+      </dependency>
     </dependencies>
 
     <build>
