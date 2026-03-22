@@ -1,0 +1,6 @@
+main: com.ideovision.MTKart
+version: 1.0.0-SNAPSHOT
+name: MTKart
+author: gabrycoso
+api-version: 1.13
+soft-depend: [PlaceholderAPI]
