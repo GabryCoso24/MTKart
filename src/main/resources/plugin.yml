@@ -8,3 +8,6 @@ commands:
   start-race:
     description: Start Race Command
     usage: /start-race
+  race:
+    description: Set a new circuit
+    usage: /race <create, set, start>

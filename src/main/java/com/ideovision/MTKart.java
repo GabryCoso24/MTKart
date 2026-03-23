@@ -3,7 +3,8 @@ package com.ideovision;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.ideovision.commands.StartRaceCommand;
+import com.ideovision.commands.RaceCommand;
+import com.ideovision.commands.RaceTabCompleter;
 import com.ideovision.listeners.PlayerListener;
 import com.ideovision.managers.PluginManager;
 
@@ -19,7 +20,8 @@ public class MTKart extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         
         getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[MTKart] enabled");
-        getCommand("start-race").setExecutor(new StartRaceCommand());
+        getCommand("race").setExecutor(new RaceCommand());
+        getCommand("race").setTabCompleter(new RaceTabCompleter());
     }
 
     @Override
