@@ -2,7 +2,9 @@ c:\Users\bobbi\Downloads\MTKart\src\main\java\com\ideovision\commands\RaceComman
 c:\Users\bobbi\Downloads\MTKart\src\main\java\com\ideovision\commands\RaceTabCompleter.java
 c:\Users\bobbi\Downloads\MTKart\src\main\java\com\ideovision\listeners\PlayerListener.java
 c:\Users\bobbi\Downloads\MTKart\src\main\java\com\ideovision\managers\CircuitManager.java
+c:\Users\bobbi\Downloads\MTKart\src\main\java\com\ideovision\managers\LapsManager.java
 c:\Users\bobbi\Downloads\MTKart\src\main\java\com\ideovision\managers\PluginManager.java
 c:\Users\bobbi\Downloads\MTKart\src\main\java\com\ideovision\managers\StartRaceManager.java
+c:\Users\bobbi\Downloads\MTKart\src\main\java\com\ideovision\managers\StopRaceManager.java
 c:\Users\bobbi\Downloads\MTKart\src\main\java\com\ideovision\MTKart.java
 c:\Users\bobbi\Downloads\MTKart\src\main\java\com\ideovision\utils\Utils.java

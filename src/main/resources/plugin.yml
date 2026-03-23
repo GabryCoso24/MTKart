@@ -10,4 +10,4 @@ commands:
     usage: /start-race
   race:
     description: Set a new circuit
-    usage: /race <create, set, start>
+    usage: /race <create, set, start, stop>

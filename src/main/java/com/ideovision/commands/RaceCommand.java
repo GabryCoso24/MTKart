@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 
 import com.ideovision.managers.CircuitManager;
 import com.ideovision.managers.StartRaceManager;
+import com.ideovision.managers.StopRaceManager;
 
 public class RaceCommand implements CommandExecutor {
     private static final Map<String, RaceSetup> raceSetup = new HashMap<>();
@@ -27,6 +28,7 @@ public class RaceCommand implements CommandExecutor {
             sender.sendMessage("§b/race create <nome>");
             sender.sendMessage("§b/race set inizio|fine|laps");
             sender.sendMessage("§b/race start <nome>");
+            sender.sendMessage("§b/race stop <nome>");
             return true;
         }
 
@@ -106,7 +108,7 @@ public class RaceCommand implements CommandExecutor {
 
             // Se il file yml esiste già, carica da lì
             if (CircuitManager.loadCircuit(raceName) != null) {
-                new StartRaceManager().StartTimer(raceName);
+                new StartRaceManager().startRace(raceName);
                 sender.sendMessage("§a✓ Gara " + raceName + " iniziata!");
                 return true;
             }
@@ -123,11 +125,29 @@ public class RaceCommand implements CommandExecutor {
 
             // Salva e avvia
             CircuitManager.saveCircuit(raceName, setup.start, setup.end, setup.laps, setup.ost);
-            new StartRaceManager().StartTimer(raceName);
+            new StartRaceManager().startRace(raceName);
             
             sender.sendMessage("§a✓ Gara " + raceName + " iniziata!");
             sender.sendMessage("§6Debug: ost salvata = " + (setup.ost == null ? "NULL" : setup.ost));
             raceSetup.remove(player.getName());
+            return true;
+        }
+
+        // STOP
+        if (subcommand.equals("stop")) {
+            if (args.length < 2) {
+                sender.sendMessage("§c/race stop <nome>");
+                return true;
+            }
+
+            String raceName = args[1];
+            if (CircuitManager.loadCircuit(raceName) == null) {
+                sender.sendMessage("§cCircuit non trovato");
+                return true;
+            }
+
+            StopRaceManager.stopRace(raceName);
+            sender.sendMessage("§a✓ Gara " + raceName + " fermata!");
             return true;
         }
 
