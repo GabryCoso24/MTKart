@@ -2,7 +2,6 @@ package com.ideovision.managers;
 
 import java.util.Objects;
 
-import org.bukkit.ChatColor;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -20,10 +19,10 @@ public class StartRaceManager {
         }
         
         String[] titles = {
-            ChatColor.translateAlternateColorCodes('&', "&c&l3"),
-            ChatColor.translateAlternateColorCodes('&', "&6&l2"),
-            ChatColor.translateAlternateColorCodes('&', "&2&l1"),
-            ChatColor.translateAlternateColorCodes('&', "&a&lGO!"),
+            "\uE001", // three.png
+            "\uE002", // two.png
+            "\uE003", // one.png
+            "\uE004"  // go.png
         };
         JavaPlugin plugin = JavaPlugin.getProvidingPlugin(StartRaceManager.class);
         final String finalOstSoundId = ostSoundId;

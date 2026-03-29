@@ -63,6 +63,25 @@ public class CircuitManager {
         return  config.getInt("laps");
     }
 
+    public static Location getStartLocation(String name){
+        FileConfiguration config = loadCircuit(name);
+        if (config == null) return null;
+
+        String worldName = config.getString("start.world", null);
+        if (worldName == null) return null;
+
+        World world = Bukkit.getWorld(worldName);
+        if (world == null) return null;
+
+        double x = config.getDouble("start.x");
+        double y = config.getDouble("start.y");
+        double z = config.getDouble("start.z");
+        float yaw = (float) config.getDouble("start.yaw", 0.0);
+        float pitch = (float) config.getDouble("start.pitch", 0.0);
+
+        return new Location(world, x, y, z, yaw, pitch);
+    }
+
     public static Location getEndLocation(String name){
         FileConfiguration config = loadCircuit(name);
         if (config == null) return null;
