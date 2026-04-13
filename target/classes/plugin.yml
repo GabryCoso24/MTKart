@@ -2,12 +2,35 @@ main: com.ideovision.MTKart
 version: 1.0.0-SNAPSHOT
 name: MTKart
 author: gabrycoso
-api-version: 1.13
+api-version: 1.21
 soft-depend: [PlaceholderAPI]
 commands:
-  start-race:
-    description: Start Race Command
-    usage: /start-race
   race:
     description: Set a new circuit
     usage: /race <create, set, start, stop>
+    permission: mtkart.race
+  kart:
+    description: Manage your kart
+    usage: /kart <equip, remove, list>
+    permission: mtkart.kart
+  mtkgui:
+    description: Open MTKart GUIs
+    usage: /mtkgui <map, leaderboard, powerups>
+    permission: mtkart.gui
+  powerup:
+    description: Use a power-up
+    usage: /powerup <type>
+    permission: mtkart.powerup
+permissions:
+  mtkart.race:
+    description: Allows use of race commands
+    default: op
+  mtkart.kart:
+    description: Allows use of kart commands
+    default: true
+  mtkart.gui:
+    description: Allows use of GUI commands
+    default: true
+  mtkart.powerup:
+    description: Allows use of power-ups
+    default: true

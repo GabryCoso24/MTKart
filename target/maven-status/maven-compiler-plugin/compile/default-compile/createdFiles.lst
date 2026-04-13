@@ -1,4 +1,6 @@
-com\ideovision\MTKart.class
+com\ideovision\config\PluginConfig.class
+com\ideovision\managers\CircuitManager.class
 com\ideovision\utils\Utils.class
 com\ideovision\managers\PluginManager.class
-com\ideovision\listeners\PlayerListener.class
+com\ideovision\commands\RaceTabCompleter.class
+com\ideovision\powerups\PowerUp$1.class

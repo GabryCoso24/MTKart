@@ -1,0 +1,66 @@
+{
+  "idle": {
+    "sounds": [
+      {
+        "name": "mtkart:idle",
+        "stream": false
+      }
+    ]
+  },
+  "coconut_mall": {
+    "sounds":[
+      {
+        "name": "mtkart:coconut_mall",
+        "stream" : false
+      }
+    ]
+  },
+  "3":{
+    "sounds":[
+      {
+        "name": "mtkart:3",
+        "stream" : false
+      }
+    ]
+  },
+  "2": {
+    "sounds":[
+      {
+        "name": "mtkart:2",
+        "stream":false
+      }
+    ]
+  },
+  "1": {
+    "sounds" :[
+      {
+        "name": "mtkart:1",
+        "stream": false
+      }
+    ]
+  },
+  "go":{
+    "sounds": [
+      {
+        "name": "mtkart:go",
+        "stream": false
+      }
+    ]
+  },
+  "end_race": {
+    "sounds": [
+      {
+        "name": "mtkart:end_race",
+        "stream": false
+      }
+    ]
+  },
+  "lap": {
+    "sounds": [
+      {
+        "name": "mtkart:lap",
+        "stream": false
+      }
+    ]
+  }
+}

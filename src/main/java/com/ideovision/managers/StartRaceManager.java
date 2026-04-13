@@ -61,6 +61,26 @@ public class StartRaceManager {
                     String soundId = Objects.requireNonNull(finalOstSoundId);
                     player.playSound(player, soundId, 1.0f, 1.0f);
                 }
+
+                // Mostra scoreboard di gara
+                try {
+                    com.ideovision.MTKart mtkart = com.ideovision.MTKart.getInstance();
+                    if (mtkart != null) {
+                        mtkart.getScoreboardManager().showRaceScoreboard(player);
+                    }
+                } catch (Exception e) {
+                    // Plugin non pronto
+                }
+            }
+
+            // Scongela tutti i giocatori al VIA
+            try {
+                com.ideovision.MTKart mtkart = com.ideovision.MTKart.getInstance();
+                if (mtkart != null) {
+                    mtkart.getStartingGridManager().unfreezeAll();
+                }
+            } catch (Exception e) {
+                // Plugin non pronto
             }
         }, 60L);
 

@@ -19,10 +19,25 @@ public class RaceTabCompleter implements TabCompleter {
             return Arrays.asList("create", "set", "start", "stop");
         }
         if (args.length == 2 && args[0].equalsIgnoreCase("set")) {
-            return Arrays.asList("inizio", "fine", "laps", "ost");
+            return Arrays.asList("inizio", "fine", "laps", "ost", "grid", "powerup", "powerup-remove");
         }
-        if (args.length == 3 && args[0].equalsIgnoreCase("set") && args[1].equalsIgnoreCase("ost")) {
-            return Arrays.asList("idle", "coconut_mall");
+        if (args.length == 3 && args[0].equalsIgnoreCase("set")) {
+            String option = args[1].toLowerCase();
+            if (option.equals("ost")) {
+                return Arrays.asList("idle", "coconut_mall");
+            }
+            if (option.equals("grid")) {
+                return Arrays.asList("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12");
+            }
+            if (option.equals("powerup-remove")) {
+                File folder = CircuitManager.getCircuitFolder();
+                File[] files = folder.listFiles((dir, name) -> name.toLowerCase().endsWith(".yml"));
+                if (files == null) return Collections.emptyList();
+                return Arrays.stream(files)
+                    .map(File::getName)
+                    .map(name -> name.substring(0, name.length() - 4))
+                    .collect(Collectors.toList());
+            }
         }
         if (args.length == 2 && (args[0].equalsIgnoreCase("start") || args[0].equalsIgnoreCase("stop"))) {
             File folder = CircuitManager.getCircuitFolder();

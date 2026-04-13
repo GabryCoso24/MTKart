@@ -1,0 +1,221 @@
+# MTKart Configuration
+# Mario Kart style racing plugin for Minecraft
+
+# Resource pack settings
+resource-pack:
+  enabled: true
+  url: "" # URL al resource pack (opzionale)
+  hash: "" # SHA1 hash del resource pack (opzionale)
+  prompt: true # Chiedi ai giocatori di accettare il resource pack
+
+# Kart settings
+kart:
+  # CustomModelData values per diversi kart
+  models:
+    default: 1000
+    speed_kart: 1001
+    balance_kart: 1002
+    acceleration_kart: 1003
+
+  # Statistiche dei kart
+  stats:
+    default:
+      speed: 5
+      acceleration: 5
+      handling: 5
+    speed_kart:
+      speed: 8
+      acceleration: 3
+      handling: 4
+    balance_kart:
+      speed: 6
+      acceleration: 6
+      handling: 6
+    acceleration_kart:
+      speed: 4
+      acceleration: 8
+      handling: 5
+
+# Power-up settings
+powerups:
+  # Abilita/dissabilita power-up
+  enabled: true
+
+  # Item per i power-up (usano CustomModelData)
+  items:
+    green_shell:
+      model-id: 2001
+      name: "&aGuscio Verde"
+      lore:
+        - "&7Lancia un guscio verde"
+        - "&7Colpisce il primo giocatore davanti"
+      speed: 2.5
+      damage: 3
+      max-stack: 1
+
+    red_shell:
+      model-id: 2002
+      name: "&cGuscio Rosso"
+      lore:
+        - "&7Guscio a ricerca"
+        - "&7Colpisce il giocatore più vicino davanti"
+      speed: 3.0
+      damage: 3
+      max-stack: 1
+
+    banana:
+      model-id: 2003
+      name: "&eBanana"
+      lore:
+        - "&7Posa una buccia di banana"
+        - "&7Fa scivolare i giocatori"
+      slip-duration: 20
+      max-stack: 3
+
+    mushroom:
+      model-id: 2004
+      name: "&fFungo"
+      lore:
+        - "&7Boost di velocità"
+        - "&7Aumenta la velocità per 3 secondi"
+      boost-multiplier: 2.0
+      boost-duration: 60
+      max-stack: 2
+
+    star:
+      model-id: 2005
+      name: "&bStella"
+      lore:
+        - "&7Invincibilità e velocità"
+        - "&75 secondi di gloria"
+      duration: 100
+      speed-multiplier: 2.5
+      max-stack: 1
+
+    lightning:
+      model-id: 2006
+      name: "&eFulmine"
+      lore:
+        - "&7Colpisci tutti gli avversari"
+        - "&7Riduci la velocità dei nemici"
+      slow-duration: 100
+      slow-multiplier: 0.5
+      max-stack: 1
+
+    blooper:
+      model-id: 2007
+      name: "&8Calamaro"
+      lore:
+        - "&7Acceca gli avversari"
+        - "&7Effetto nausea"
+      blindness-duration: 100
+      max-stack: 1
+
+    bob_omb:
+      model-id: 2008
+      name: "&cBob-omba"
+      lore:
+        - "&7Lancia una bomba esplosiva"
+        - "&7Esplode dopo 3 secondi"
+      explosion-delay: 60
+      explosion-radius: 5
+      damage: 5
+      max-stack: 1
+
+# Distribuzione power-up
+distribution:
+  # Posizioni che danno power-up (caselle item sul circuito)
+  enabled: true
+  respawn-time: 100 # tick tra un respawn e l'altro
+  max-powerups: 3 # power-up massimi per casella
+  box-model-id: 3000 # CustomModelData per la casella item visibile
+  collection-radius: 1.8 # raggio in blocchi per raccogliere un power-up
+
+  # Sistema di distribuzione basato sulla posizione
+  # I giocatori indietro hanno chance migliori
+  position-based:
+    enabled: true
+    last-place-chance:
+      legendary: 0.15 # stella, lightning
+      rare: 0.35 # red shell, mushroom
+      common: 0.50 # green shell, banana
+    first-place-chance:
+      legendary: 0.02
+      rare: 0.18
+      common: 0.80
+
+# GUI settings
+gui:
+  # Mappa del circuito
+  map:
+    enabled: true
+    title: "&6Mappa del Circuito"
+    rows: 6
+    update-interval: 20 # tick tra ogni aggiornamento
+    player-head: true # Usa le teste dei giocatori come indicatori
+
+  # Classifica
+  leaderboard:
+    enabled: true
+    title: "&6Classifica"
+    rows: 6
+    update-interval: 40 # tick tra ogni aggiornamento
+
+  # Inventario power-up
+  inventory:
+    enabled: true
+    title: "&6I tuoi Power-Up"
+    rows: 3
+
+# Gara settings
+race:
+  # Griglia di partenza
+  grid:
+    max-slots: 12 # numero massimo di posizioni di partenza
+    freeze-on-start: true # congela i giocatori durante il countdown
+
+  # Countdown iniziale
+  countdown:
+    enabled: true
+    times: [3, 2, 1, "GO!"]
+    interval: 20 # tick tra ogni numero
+
+  # False partenze
+  false-start:
+    enabled: true
+    penalty: 20 # tick di penalità
+
+  # Checkpoint (opzionali, per circuiti complessi)
+  checkpoints:
+    enabled: false
+    required: false # Se true, i giocatori devono passarli in ordine
+
+# Suoni
+sounds:
+  countdown:
+    "3": "BLOCK_NOTE_BLOCK_PLING"
+    "2": "BLOCK_NOTE_BLOCK_PLING"
+    "1": "BLOCK_NOTE_BLOCK_PLING"
+    "go": "ENTITY_ENDER_DRAGON_GROWL"
+  lap: "ENTITY_EXPERIENCE_ORB_PICKUP"
+  finish: "UI_TOAST_CHALLENGE_COMPLETE"
+  powerup_collect: "ENTITY_EXPERIENCE_ORB_PICKUP"
+  powerup_use: "ENTITY_GENERIC_EXPLODE"
+  hit: "ENTITY_GENERIC_HURT"
+  boost: "ENTITY_GENERIC_EXTINGUISH_FIRE"
+
+# Messaggi
+messages:
+  prefix: "&6&lMTKart &r&8» &r"
+  race-start: "&aLa gara è iniziata!"
+  race-stop: "&cLa gara è stata fermata"
+  lap: "&bGiro &e%current%&b/&e%total%"
+  finish: "&a&lGARA COMPLETATA! &7Posizione: &e%position%"
+  powerup-got: "&aHai ottenuto &e%powerup%"
+  powerup-used: "&7Hai usato &e%powerup%"
+  hit-by: "&cSei stato colpito da &e%player%&c!"
+  countdown:
+    "3": "&e3..."
+    "2": "&e2..."
+    "1": "&e1..."
+    "go": "&a&lVIA!"

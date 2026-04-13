@@ -1,0 +1,13 @@
+name: coconut_mall
+start:
+  x: -37.749042171570785
+  y: 63.0
+  z: 61.03641168701417
+  world: world
+end:
+  x: -38.773990313887396
+  y: 63.0
+  z: 41.04657282259693
+  world: world
+laps: 3
+ost: coconut_mall

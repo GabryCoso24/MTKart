@@ -1,0 +1,25 @@
+# MTKart Custom Sounds
+# Aggiungi questi file nella cartella plugins/MTKart/
+
+3:
+  sounds:
+    - mtkart:countdown/3
+2:
+  sounds:
+    - mtkart:countdown/2
+1:
+  sounds:
+    - mtkart:countdown/1
+go:
+  sounds:
+    - mtkart:countdown/go
+lap:
+  sounds:
+    - mtkart:events/lap
+end_race:
+  sounds:
+    - mtkart:events/finish
+idle:
+  sounds:
+    - mtkart:music/idle
+  stream: true

@@ -4,10 +4,13 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.ideovision.MTKart;
+
 public class StopRaceManager {
 
     public static void stopRace(String raceName) {
         JavaPlugin plugin = JavaPlugin.getProvidingPlugin(StopRaceManager.class);
+        MTKart mtkart = MTKart.getInstance();
 
         String ostName = CircuitManager.getOstFromCircuit(raceName);
         String ostSoundId = null;
@@ -32,5 +35,11 @@ public class StopRaceManager {
 
         plugin.getLogger().info(String.format("[StopRaceManager] Gara '%s' fermata", raceName));
         LapsManager.stopTracking();
+
+        // Scongela tutti i giocatori
+        if (mtkart != null) {
+            mtkart.getStartingGridManager().unfreezeAll();
+            mtkart.getPowerUpSpawnerManager().stopSpawners();
+        }
     }
 }

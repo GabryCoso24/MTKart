@@ -122,19 +122,38 @@ public class LapsManager {
 
                     int currentLap = PLAYER_LAPS.getOrDefault(id, 0) + 1;
                     PLAYER_LAPS.put(id, currentLap);
-                    player.sendMessage("Current Lap: " + currentLap + "/" + laps);
+
+                    try {
+                        com.ideovision.MTKart mtkart = com.ideovision.MTKart.getInstance();
+                        if (mtkart != null) {
+                            mtkart.getRaceManager().recordLap(player);
+                        }
+                    } catch (Exception e) {
+                        // Plugin non ancora pronto
+                    }
+
+                    player.sendMessage("§6Giro completato: §e" + currentLap + "/" + laps);
 
                     if (currentLap < laps) {
                         player.playSound(player, "mtkart:lap", SoundCategory.PLAYERS, 1.0f, 1.0f);
                     } else {
                         FINISHED_PLAYERS.add(id);
-                        player.sendMessage("Race finished!");
-                        player.sendTitle("FINISH!", "", 5, 30, 10);
+
+                        try {
+                            com.ideovision.MTKart mtkart = com.ideovision.MTKart.getInstance();
+                            if (mtkart != null) {
+                                int position = mtkart.getRaceManager().getPosition(player);
+                                mtkart.getScoreboardManager().showFinishTitle(player, position, laps);
+                                player.sendMessage("§a§lGARA COMPLETATA! §7Posizione: §e#" + position);
+                            }
+                        } catch (Exception e) {
+                            player.sendMessage("§a§lGARA COMPLETATA!");
+                        }
 
                         if (ostSoundId != null) {
                             player.stopSound(ostSoundId);
                         }
-                        player.playSound(player, "mtkart:end_race", 1.0f, 1.0f);
+                        player.playSound(player, "mtkart:end_race", SoundCategory.PLAYERS, 1.0f, 1.0f);
                     }
                 }
 

@@ -1,0 +1,40 @@
+{
+  "sounds": {
+    "3": {
+      "sounds": [
+        "mtkart:countdown_3"
+      ]
+    },
+    "2": {
+      "sounds": [
+        "mtkart:countdown_2"
+      ]
+    },
+    "1": {
+      "sounds": [
+        "mtkart:countdown_1"
+      ]
+    },
+    "go": {
+      "sounds": [
+        "mtkart:go"
+      ]
+    },
+    "lap": {
+      "sounds": [
+        "mtkart:lap"
+      ]
+    },
+    "end_race": {
+      "sounds": [
+        "mtkart:end_race"
+      ]
+    },
+    "idle": {
+      "sounds": [
+        "mtkart:idle"
+      ],
+      "stream": true
+    }
+  }
+}
