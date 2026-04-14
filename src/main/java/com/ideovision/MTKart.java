@@ -10,6 +10,7 @@ import com.ideovision.commands.PowerUpCommand;
 import com.ideovision.commands.RaceCommand;
 import com.ideovision.commands.RaceTabCompleter;
 import com.ideovision.config.PluginConfig;
+import com.ideovision.config.ScoreboardConfig;
 import com.ideovision.gui.RaceGUI;
 import com.ideovision.karts.KartManager;
 import com.ideovision.listeners.PlayerListener;
@@ -28,6 +29,7 @@ public class MTKart extends JavaPlugin {
     private static MTKart instance;
 
     private PluginConfig config;
+    private ScoreboardConfig scoreboardConfig;
     private PowerUpManager powerUpManager;
     private PowerUpSpawnerManager powerUpSpawnerManager;
     private KartManager kartManager;
@@ -43,6 +45,9 @@ public class MTKart extends JavaPlugin {
         // Initialize config
         saveDefaultConfig();
         config = PluginConfig.getInstance(this);
+
+        // Initialize scoreboard config
+        scoreboardConfig = new ScoreboardConfig(this);
 
         // Initialize managers
         PluginManager.getInstance().initialize();
@@ -122,6 +127,10 @@ public class MTKart extends JavaPlugin {
 
     public PluginConfig getConfigManager() {
         return config;
+    }
+
+    public ScoreboardConfig getScoreboardConfig() {
+        return scoreboardConfig;
     }
 
     public PowerUpManager getPowerUpManager() {

@@ -1,10 +1,6 @@
 package com.ideovision.race;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -17,37 +13,52 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
 import com.ideovision.MTKart;
+import com.ideovision.config.ScoreboardConfig;
+import com.ideovision.config.ScoreboardConfig.ScoreboardLayout;
 import com.ideovision.managers.LapsManager;
 
 public class ScoreboardManager {
     private final MTKart plugin;
+    private final ScoreboardConfig scoreboardConfig;
     private final Map<UUID, Integer> updateTasks = new HashMap<>();
 
     public ScoreboardManager(MTKart plugin) {
         this.plugin = plugin;
+        this.scoreboardConfig = plugin.getScoreboardConfig();
     }
 
     /**
      * Mostra la scoreboard di gara a un giocatore
      */
     public void showRaceScoreboard(Player player) {
+        showRaceScoreboard(player, "default_scoreboard");
+    }
+
+    /**
+     * Mostra la scoreboard di gara a un giocatore con un layout specifico
+     */
+    public void showRaceScoreboard(Player player, String layoutName) {
         org.bukkit.scoreboard.ScoreboardManager scoreboardManager = Bukkit.getScoreboardManager();
         if (scoreboardManager == null) {
             return;
         }
 
+        ScoreboardLayout layout = scoreboardConfig.getLayout(layoutName);
+        if (layout == null) {
+            layout = scoreboardConfig.getDefaultLayout();
+        }
+
         Scoreboard scoreboard = scoreboardManager.getNewScoreboard();
 
-        Objective objective = scoreboard.registerNewObjective("mtkart", Criteria.DUMMY,
-            ChatColor.GOLD + "" + ChatColor.BOLD + "MTKART");
+        Objective objective = scoreboard.registerNewObjective("mtkart", Criteria.DUMMY, layout.title);
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
-        updateScoreboard(player, objective);
+        updateScoreboard(player, objective, layout);
         updateTabList(scoreboard);
 
         player.setScoreboard(scoreboard);
 
-        startUpdateTask(player, scoreboard, objective);
+        startUpdateTask(player, scoreboard, objective, layout);
     }
 
     /**
@@ -77,46 +88,88 @@ public class ScoreboardManager {
         }
     }
 
-    private void updateScoreboard(Player player, Objective objective) {
-        int line = 15;
-
-        setScore(objective, line--, " ");
-
+    private void updateScoreboard(Player player, Objective objective, ScoreboardLayout layout) {
         RaceManager raceManager = plugin.getRaceManager();
-        setScore(objective, line--, ChatColor.GRAY + "Tempo: " + ChatColor.WHITE + raceManager.getFormattedRaceTime());
-
         int position = raceManager.getPosition(player);
         int total = raceManager.getTotalRacers();
         String positionColor = getPositionColor(position);
-        setScore(objective, line--, ChatColor.GRAY + "Pos: " + positionColor + "#" + position + "/" + total);
-
-        setScore(objective, line--, "  ");
-
         int currentLap = LapsManager.getCurrentLap(player);
         int totalLaps = LapsManager.getActiveRaceTotalLaps();
-        setScore(objective, line--, ChatColor.GRAY + "Giro: " + ChatColor.YELLOW + currentLap + "/" + totalLaps);
-
-        setScore(objective, line--, "   ");
-
         Long bestTime = raceManager.getBestLapTime(player);
         String bestTimeString = bestTime != null ? raceManager.formatTime(bestTime) : "--:--";
-        setScore(objective, line--, ChatColor.GRAY + "Best: " + ChatColor.GREEN + bestTimeString);
 
-        setScore(objective, line--, "    ");
-
-        setScore(objective, line--, ChatColor.GOLD + "" + ChatColor.BOLD + "Classifica:");
-
-        for (int i = Math.min(3, total); i >= 1; i--) {
-            Player racer = raceManager.getPlayerAtPosition(i);
-            if (racer != null) {
-                String displayName = racer.equals(player) ?
-                    ChatColor.YELLOW + "" + ChatColor.BOLD + ">" + racer.getName() + " <" :
-                    ChatColor.GRAY + racer.getName();
-                setScore(objective, line--, displayName);
-            }
+        List<String> formattedLines = new ArrayList<>();
+        for (String line : layout.lines) {
+            formattedLines.add(formatLine(line, player, raceManager, position, positionColor, currentLap, totalLaps, bestTimeString));
         }
 
-        setScore(objective, line--, "     ");
+        // Se la classifica è abilitata e ci sono placeholder, espandi la classifica
+        if (layout.leaderboardEnabled) {
+            List<String> expandedLines = new ArrayList<>();
+            for (String line : formattedLines) {
+                if (line.contains("%leaderboard_")) {
+                    int pos = getLeaderboardPositionFromPlaceholder(line);
+                    if (pos > 0) {
+                        for (int i = 1; i <= layout.leaderboardPositions; i++) {
+                            Player racer = raceManager.getPlayerAtPosition(i);
+                            if (racer != null) {
+                                String racerLine = line
+                                    .replace("%leaderboard_" + i + "%", getRacerDisplayName(racer, player))
+                                    .replace("%leaderboard_pos%", String.valueOf(i))
+                                    .replace("%leaderboard_name%", racer.getName());
+                                expandedLines.add(racerLine);
+                            }
+                        }
+                    } else {
+                        // Placeholder generico - espandi tutti
+                        for (int i = 1; i <= layout.leaderboardPositions; i++) {
+                            Player racer = raceManager.getPlayerAtPosition(i);
+                            if (racer != null) {
+                                expandedLines.add(getRacerDisplayName(racer, player));
+                            }
+                        }
+                    }
+                } else {
+                    expandedLines.add(line);
+                }
+            }
+            formattedLines = expandedLines;
+        }
+
+        // Assegna i punteggi partendo dal basso
+        int score = formattedLines.size() - 1;
+        for (String line : formattedLines) {
+            setScore(objective, score--, line);
+        }
+    }
+
+    private String formatLine(String line, Player player, RaceManager raceManager,
+                              int position, String positionColor, int currentLap, int totalLaps, String bestTimeString) {
+        return line
+            .replace("%player%", player.getName())
+            .replace("%position%", String.valueOf(position))
+            .replace("%position_color%", positionColor)
+            .replace("%total%", String.valueOf(raceManager.getTotalRacers()))
+            .replace("%current_lap%", String.valueOf(currentLap))
+            .replace("%total_laps%", String.valueOf(totalLaps))
+            .replace("%best_lap%", bestTimeString)
+            .replace("%race_time%", raceManager.getFormattedRaceTime());
+    }
+
+    private int getLeaderboardPositionFromPlaceholder(String line) {
+        for (int i = 1; i <= 12; i++) {
+            if (line.contains("%leaderboard_" + i + "%")) {
+                return i;
+            }
+        }
+        return 0;
+    }
+
+    private String getRacerDisplayName(Player racer, Player viewer) {
+        if (racer.equals(viewer)) {
+            return ChatColor.YELLOW + "" + ChatColor.BOLD + ">" + racer.getName() + " <";
+        }
+        return ChatColor.GRAY + racer.getName();
     }
 
     /**
@@ -191,7 +244,7 @@ public class ScoreboardManager {
         scoreObj.setScore(score);
     }
 
-    private void startUpdateTask(Player player, Scoreboard scoreboard, Objective objective) {
+    private void startUpdateTask(Player player, Scoreboard scoreboard, Objective objective, ScoreboardLayout layout) {
         final int[] taskId = new int[1];
         taskId[0] = plugin.getServer().getScheduler().scheduleSyncRepeatingTask(
             plugin,
@@ -205,14 +258,14 @@ public class ScoreboardManager {
                     for (String entry : scoreboard.getEntries()) {
                         scoreboard.resetScores(entry);
                     }
-                    updateScoreboard(player, objective);
+                    updateScoreboard(player, objective, layout);
                     updateTabList(scoreboard);
                 } else {
                     plugin.getServer().getScheduler().cancelTask(taskId[0]);
                 }
             },
-            20L,
-            20L
+            layout.updateInterval,
+            layout.updateInterval
         );
 
         updateTasks.put(player.getUniqueId(), taskId[0]);

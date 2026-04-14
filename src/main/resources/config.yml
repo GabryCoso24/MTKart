@@ -17,6 +17,20 @@ kart:
     balance_kart: 1002
     acceleration_kart: 1003
 
+  # Integrazione opzionale con ModelEngine
+  # Se enabled=true e ModelEngine e' installato, MTKart prova ad applicare
+  # il modello ME al sedile del kart tramite comando console.
+  modelengine:
+    enabled: false
+    models:
+      default: "mtkart_default"
+      speed_kart: "mtkart_speed"
+      balance_kart: "mtkart_balance"
+      acceleration_kart: "mtkart_acceleration"
+    commands:
+      add: "meg model add {entity} {model}"
+      remove: "meg model remove {entity} {model}"
+
   # Statistiche dei kart
   stats:
     default:

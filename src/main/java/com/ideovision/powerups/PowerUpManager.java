@@ -209,7 +209,7 @@ public class PowerUpManager {
 
             for (Player p : shellWorld.getPlayers()) {
                 Location playerLocation = Objects.requireNonNull(p.getLocation(), "player location");
-                if (!p.equals(player) && playerLocation.distance(shellLoc) < 1.5) {
+                if (playerLocation.distance(shellLoc) < 1.5) {
                     hitPlayer(p, player);
                     shell.remove();
                     return;
@@ -281,7 +281,7 @@ public class PowerUpManager {
             for (Player p : world.getPlayers()) {
                 Location playerLocation = Objects.requireNonNull(p.getLocation(), "player location");
                 if (playerLocation.distance(banana.getLocation()) < 1.0) {
-                    if (!p.equals(owner) && LapsManager.isRacing(p)) {
+                    if (LapsManager.isRacing(p)) {
                         applySlip(p, owner);
                     }
                     banana.remove();
@@ -433,7 +433,7 @@ public class PowerUpManager {
 
         for (Player p : world.getPlayers()) {
             Location playerLocation = Objects.requireNonNull(p.getLocation(), "player location");
-            if (!p.equals(owner) && playerLocation.distance(location) < 5.0) {
+            if (playerLocation.distance(location) < 5.0) {
                 if (LapsManager.isRacing(p)) {
                     p.setVelocity(playerLocation.toVector().subtract(location.toVector()).normalize().multiply(2).setY(1));
                     p.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 60, 2));

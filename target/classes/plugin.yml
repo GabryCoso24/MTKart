@@ -3,11 +3,11 @@ version: 1.0.0-SNAPSHOT
 name: MTKart
 author: gabrycoso
 api-version: 1.21
-soft-depend: [PlaceholderAPI]
+soft-depend: [PlaceholderAPI, ModelEngine, ProtocolLib]
 commands:
   race:
     description: Set a new circuit
-    usage: /race <create, set, start, stop>
+    usage: /race <create, edit, set, save, delete, start, stop>
     permission: mtkart.race
   kart:
     description: Manage your kart

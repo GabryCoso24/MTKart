@@ -22,9 +22,10 @@ public class LapsManager {
     private static final Set<UUID> TRACKED_PLAYERS = new HashSet<>();
     private static final Set<UUID> FINISHED_PLAYERS = new HashSet<>();
 
-    private static final double FINISH_RADIUS = 3.0;
-    private static final double MIN_DIRECTION_DOT = 0.35;
-    private static final double MIN_MOVEMENT_SQUARED = 0.04;
+    private static final double FINISH_RADIUS = 5.0;
+    private static final double MIN_DIRECTION_DOT = 0.1;
+    private static final double MIN_MOVEMENT_SQUARED = 0.01;
+    private static final double MAX_Y_DIFFERENCE = 2.0;
     private static String activeRaceName = null;
     private static int activeRaceTotalLaps = 0;
     private static Integer taskId = null;
@@ -44,12 +45,19 @@ public class LapsManager {
         activeRaceTotalLaps = laps;
 
         Location finishLine = Objects.requireNonNull(endLocation);
-        Vector finishDirection = finishLine.toVector().subtract(startLocation.toVector());
+        // Calcola la direzione del traguardo basata sull'orientamento della linea di arrivo
+        Vector finishDirection = finishLine.clone().subtract(startLocation).toVector();
         finishDirection.setY(0);
         if (finishDirection.lengthSquared() == 0) {
-            return;
+            // Fallback: usa la direzione dello yaw della linea di arrivo
+            finishDirection = endLocation.getDirection();
+            finishDirection.setY(0);
+            if (finishDirection.lengthSquared() == 0) {
+                finishDirection = new Vector(0, 0, 1);
+            }
         }
         finishDirection.normalize();
+        final Vector finalFinishDirection = finishDirection;
 
         String ostName = CircuitManager.getOstFromCircuit(race);
         final String ostSoundId;
@@ -91,6 +99,14 @@ public class LapsManager {
                 if (playerLocation == null || playerLocation.getWorld() == null) {
                     continue;
                 }
+
+                // Controlla la differenza di Y per evitare falsi positivi su linee di arrivo multi-livello
+                Location lastLoc = PLAYER_LAST_LOCATION.get(id);
+                if (lastLoc != null && Math.abs(playerLocation.getY() - lastLoc.getY()) > MAX_Y_DIFFERENCE) {
+                    PLAYER_LAST_LOCATION.put(id, playerLocation.clone());
+                    continue;
+                }
+
                 boolean inFinishZone = playerLocation.distance(finishLine) <= FINISH_RADIUS;
                 boolean wasInFinishZone = PLAYER_IN_FINISH_ZONE.getOrDefault(id, false);
 
@@ -113,7 +129,8 @@ public class LapsManager {
                     }
 
                     movement.normalize();
-                    double directionDot = movement.dot(finishDirection);
+                    double directionDot = movement.dot(finalFinishDirection);
+                    // Accetta sia direzione positiva che leggermente negativa (permette piccoli angoli)
                     if (directionDot < MIN_DIRECTION_DOT) {
                         PLAYER_LAST_LOCATION.put(id, playerLocation.clone());
                         PLAYER_IN_FINISH_ZONE.put(id, inFinishZone);
@@ -143,7 +160,9 @@ public class LapsManager {
                             com.ideovision.MTKart mtkart = com.ideovision.MTKart.getInstance();
                             if (mtkart != null) {
                                 int position = mtkart.getRaceManager().getPosition(player);
+                                mtkart.getRaceManager().markFinished(player, position);
                                 mtkart.getScoreboardManager().showFinishTitle(player, position, laps);
+                                mtkart.getScoreboardManager().hideScoreboard(player);
                                 player.sendMessage("§a§lGARA COMPLETATA! §7Posizione: §e#" + position);
                             }
                         } catch (Exception e) {
@@ -170,6 +189,16 @@ public class LapsManager {
             }
 
             if (allFinished) {
+                try {
+                    com.ideovision.MTKart mtkart = com.ideovision.MTKart.getInstance();
+                    if (mtkart != null) {
+                        mtkart.getRaceManager().stopRace();
+                        mtkart.getScoreboardManager().hideAllScoreboards();
+                        mtkart.getPowerUpSpawnerManager().stopSpawners();
+                    }
+                } catch (Exception e) {
+                    // Ignore cleanup errors at race end
+                }
                 stopTracking();
             }
         }, 0L, 5L);

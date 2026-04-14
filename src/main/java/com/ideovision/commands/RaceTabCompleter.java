@@ -16,7 +16,7 @@ public class RaceTabCompleter implements TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String alias, String[] args) {
         if (args.length == 1) {
-            return Arrays.asList("create", "set", "start", "stop");
+            return Arrays.asList("create", "edit", "set", "save", "delete", "start", "stop");
         }
         if (args.length == 2 && args[0].equalsIgnoreCase("set")) {
             return Arrays.asList("inizio", "fine", "laps", "ost", "grid", "powerup", "powerup-remove");
@@ -39,7 +39,13 @@ public class RaceTabCompleter implements TabCompleter {
                     .collect(Collectors.toList());
             }
         }
-        if (args.length == 2 && (args[0].equalsIgnoreCase("start") || args[0].equalsIgnoreCase("stop"))) {
+        if (args.length == 2 && (
+            args[0].equalsIgnoreCase("start")
+                || args[0].equalsIgnoreCase("stop")
+                || args[0].equalsIgnoreCase("edit")
+                || args[0].equalsIgnoreCase("delete")
+                || args[0].equalsIgnoreCase("save")
+        )) {
             File folder = CircuitManager.getCircuitFolder();
             File[] files = folder.listFiles((dir, name) -> name.toLowerCase().endsWith(".yml"));
             if (files == null) {

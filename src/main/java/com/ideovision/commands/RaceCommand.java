@@ -29,7 +29,10 @@ public class RaceCommand implements CommandExecutor {
 
         if (args.length == 0) {
             sender.sendMessage("§b/race create <nome>");
+            sender.sendMessage("§b/race edit <nome>");
             sender.sendMessage("§b/race set inizio|fine|laps|ost|grid|powerup");
+            sender.sendMessage("§b/race save [nome]");
+            sender.sendMessage("§b/race delete <nome>");
             sender.sendMessage("§b/race start <nome>");
             sender.sendMessage("§b/race stop <nome>");
             return true;
@@ -46,6 +49,33 @@ public class RaceCommand implements CommandExecutor {
             String raceName = args[1];
             raceSetup.put(player.getName(), new RaceSetup(raceName, player.getLocation(), null, 0));
             sender.sendMessage("§aCircuit " + raceName + " creato. Usa /race set");
+            return true;
+        }
+
+        // EDIT
+        if (subcommand.equals("edit")) {
+            if (args.length < 2) {
+                sender.sendMessage("§c/race edit <nome>");
+                return true;
+            }
+
+            String raceName = args[1];
+            if (CircuitManager.loadCircuit(raceName) == null) {
+                sender.sendMessage("§cCircuit non trovato");
+                return true;
+            }
+
+            RaceSetup setup = new RaceSetup(
+                raceName,
+                CircuitManager.getStartLocation(raceName),
+                CircuitManager.getEndLocation(raceName),
+                CircuitManager.getLapsFromCircuit(raceName),
+                CircuitManager.getOstFromCircuit(raceName)
+            );
+            raceSetup.put(player.getName(), setup);
+
+            sender.sendMessage("§aModifica caricata per: §e" + raceName);
+            sender.sendMessage("§7Usa /race set ... e poi /race save " + raceName);
             return true;
         }
 
@@ -137,7 +167,16 @@ public class RaceCommand implements CommandExecutor {
                     sender.sendMessage("§c/race set laps <numero>");
                     return true;
                 }
-                setup.laps = Integer.parseInt(args[2]);
+                try {
+                    setup.laps = Integer.parseInt(args[2]);
+                } catch (NumberFormatException e) {
+                    sender.sendMessage("§cNumero giri non valido");
+                    return true;
+                }
+                if (setup.laps <= 0) {
+                    sender.sendMessage("§cI giri devono essere maggiori di 0");
+                    return true;
+                }
                 sender.sendMessage("§aGiri: " + setup.laps);
                 return true;
             }
@@ -155,6 +194,30 @@ public class RaceCommand implements CommandExecutor {
             return false;
         }
 
+        // SAVE
+        if (subcommand.equals("save")) {
+            RaceSetup setup = raceSetup.get(player.getName());
+            if (setup == null) {
+                sender.sendMessage("§cNessuna modifica in corso. Usa /race create o /race edit");
+                return true;
+            }
+
+            String raceName = setup.name;
+            if (args.length >= 2 && !args[1].equalsIgnoreCase(setup.name)) {
+                sender.sendMessage("§cStai modificando il circuito §e" + setup.name + "§c. Usa /race save " + setup.name);
+                return true;
+            }
+
+            if (setup.start == null || setup.end == null || setup.laps <= 0) {
+                sender.sendMessage("§cCompleta: /race set inizio|fine|laps");
+                return true;
+            }
+
+            CircuitManager.saveCircuit(raceName, setup.start, setup.end, setup.laps, setup.ost);
+            sender.sendMessage("§aCircuit §e" + raceName + " §asalvato!");
+            return true;
+        }
+
         // START
         if (subcommand.equals("start")) {
             if (args.length < 2) {
@@ -164,19 +227,20 @@ public class RaceCommand implements CommandExecutor {
 
             String raceName = args[1];
 
-            // Se il circuito non esiste ancora, salvalo dal setup in memoria
-            if (CircuitManager.loadCircuit(raceName) == null) {
-                RaceSetup setup = raceSetup.get(player.getName());
-                if (setup == null || !setup.name.equals(raceName)) {
-                    sender.sendMessage("§cCircuit non trovato");
-                    return true;
-                }
+            // Se c'è un setup in memoria per questa race, persisti sempre i campi principali.
+            // Questo evita di perdere start/end/laps/ost quando il file YAML è stato già creato
+            // prima tramite /race set grid o /race set powerup.
+            RaceSetup setup = raceSetup.get(player.getName());
+            if (setup != null && setup.name.equals(raceName)) {
                 if (setup.start == null || setup.end == null || setup.laps == 0) {
                     sender.sendMessage("§cCompleta: /race set inizio|fine|laps");
                     return true;
                 }
                 CircuitManager.saveCircuit(raceName, setup.start, setup.end, setup.laps, setup.ost);
                 raceSetup.remove(player.getName());
+            } else if (CircuitManager.loadCircuit(raceName) == null) {
+                sender.sendMessage("§cCircuit non trovato");
+                return true;
             }
 
             // Inizializza race manager
@@ -205,6 +269,29 @@ public class RaceCommand implements CommandExecutor {
             new StartRaceManager().startRace(raceName);
 
             sender.sendMessage("§a✓ Gara " + raceName + " iniziata!");
+            return true;
+        }
+
+        // DELETE
+        if (subcommand.equals("delete")) {
+            if (args.length < 2) {
+                sender.sendMessage("§c/race delete <nome>");
+                return true;
+            }
+
+            String raceName = args[1];
+            boolean deleted = CircuitManager.deleteCircuit(raceName);
+            if (!deleted) {
+                sender.sendMessage("§cCircuit non trovato");
+                return true;
+            }
+
+            RaceSetup setup = raceSetup.get(player.getName());
+            if (setup != null && setup.name.equalsIgnoreCase(raceName)) {
+                raceSetup.remove(player.getName());
+            }
+
+            sender.sendMessage("§aCircuit §e" + raceName + " §aeliminato!");
             return true;
         }
 
@@ -261,11 +348,15 @@ public class RaceCommand implements CommandExecutor {
         String ost;
 
         RaceSetup(String name, org.bukkit.Location start, org.bukkit.Location end, int laps) {
+            this(name, start, end, laps, null);
+        }
+
+        RaceSetup(String name, org.bukkit.Location start, org.bukkit.Location end, int laps, String ost) {
             this.name = name;
             this.start = start;
             this.end = end;
             this.laps = laps;
-            this.ost = null;
+            this.ost = ost;
         }
     }
 }

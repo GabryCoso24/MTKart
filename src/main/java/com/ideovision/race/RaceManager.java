@@ -72,6 +72,16 @@ public class RaceManager {
         bestLapTimes.remove(player.getUniqueId());
     }
 
+    public void markFinished(Player player, int position) {
+        RaceData data = raceData.get(player.getUniqueId());
+        if (data == null) {
+            return;
+        }
+
+        data.finishedPosition = position;
+        data.finishTime = System.currentTimeMillis();
+    }
+
     /**
      * Registra il passaggio di un giro
      */
@@ -232,6 +242,10 @@ public class RaceManager {
         bestLapTimes.clear();
         leaderboard.clear();
         raceStartTime = 0;
+    }
+
+    public boolean isRaceRunning() {
+        return raceStartTime > 0;
     }
 
     /**

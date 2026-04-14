@@ -1,0 +1,39 @@
+# Race Scoreboard Layout
+# Usa questo file per personalizzare la scoreboard durante la gara
+
+# Titolo della scoreboard
+title: "&6&lMTKART RACING"
+
+# Intervallo di aggiornamento in tick (20 tick = 1 secondo)
+update-interval: 1
+
+# Linee della scoreboard (dall'alto verso il basso)
+# Placeholder disponibili:
+#   %player% - Nome del giocatore
+#   %position% - Posizione attuale
+#   %position_color% - Colore della posizione (oro per 1°, bianco per 2°, giallo per 3°, grigio per altri)
+#   %total% - Numero totale di piloti
+#   %current_lap% - Giro attuale
+#   %total_laps% - Giri totali
+#   %best_lap% - Miglior tempo sul giro
+#   %race_time% - Tempo di gara
+#   %leaderboard_1%, %leaderboard_2%, %leaderboard_3% - Nome dei primi 3 piloti
+lines:
+  - "&f"
+  - "&8&l▸ &7Tempo: &e%race_time%"
+  - "&8&l▸ &7Pos: %position_color%#%position% &8/&e %total%"
+  - "&f"
+  - "&8&l▸ &7Giro: &e%current_lap%&8/&e%total_laps%"
+  - "&f"
+  - "&8&l▸ &7Best: &a%best_lap%"
+  - "&f"
+  - "&6&l╔══ CLASSIFICA ══╗"
+  - "%leaderboard_1%"
+  - "%leaderboard_2%"
+  - "%leaderboard_3%"
+  - "&f"
+
+# Configurazione opzionale della classifica
+leaderboard:
+  enabled: true
+  positions: 3

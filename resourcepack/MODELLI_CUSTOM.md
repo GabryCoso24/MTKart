@@ -64,3 +64,43 @@ Ogni oggetto custom usa:
 ## Nota Su OptiFine/CIT
 
 La cartella `minecraft/optifine/cit/` è opzionale. MTKart funziona già con i modelli vanilla basati su `CustomModelData`.
+
+## Integrazione ModelEngine (Opzionale)
+
+Se vuoi usare modelli entity avanzati senza dipendere da OptiFine, MTKart supporta una
+integrazione opzionale con ModelEngine.
+
+### Requisiti
+
+1. Plugin `ModelEngine` installato sul server.
+2. Comando `meg` funzionante (o equivalente della tua versione).
+3. Modelli già importati in ModelEngine con ID coerenti.
+
+### Configurazione MTKart
+
+In `config.yml` usa la sezione:
+
+```yml
+kart:
+  modelengine:
+    enabled: true
+    models:
+      default: "mtkart_default"
+      speed_kart: "mtkart_speed"
+      balance_kart: "mtkart_balance"
+      acceleration_kart: "mtkart_acceleration"
+    commands:
+      add: "meg model add {entity} {model}"
+      remove: "meg model remove {entity} {model}"
+```
+
+Placeholder supportati nei comandi:
+
+1. `{entity}` UUID dell'entità sedile del kart.
+2. `{model}` ID modello ModelEngine del kart.
+3. `{player}` nome del giocatore.
+
+### Come Funziona il Fallback
+
+1. Se ModelEngine non è presente o fallisce il comando `add`, MTKart usa automaticamente il rendering vanilla con `ItemDisplay + CustomModelData`.
+2. Quindi puoi tenere entrambe le pipeline attive durante la migrazione.

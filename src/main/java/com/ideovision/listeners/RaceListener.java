@@ -9,7 +9,6 @@ import org.bukkit.event.player.PlayerMoveEvent;
 
 import com.ideovision.MTKart;
 import com.ideovision.managers.LapsManager;
-import com.ideovision.race.StartingGridManager;
 
 public class RaceListener implements Listener {
 
@@ -48,10 +47,6 @@ public class RaceListener implements Listener {
             return;
         }
 
-        // Aggiorna posizione del kart quando il giocatore si muove
-        if (plugin.getKartManager().hasKart(player)) {
-            plugin.getKartManager().teleportKart(player, event.getTo());
-        }
     }
 
     @EventHandler

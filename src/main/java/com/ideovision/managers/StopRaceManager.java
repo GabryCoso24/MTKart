@@ -36,10 +36,11 @@ public class StopRaceManager {
         plugin.getLogger().info(String.format("[StopRaceManager] Gara '%s' fermata", raceName));
         LapsManager.stopTracking();
 
-        // Scongela tutti i giocatori
+        // Scongela tutti i giocatori e nascondi le scoreboard
         if (mtkart != null) {
             mtkart.getStartingGridManager().unfreezeAll();
             mtkart.getPowerUpSpawnerManager().stopSpawners();
+            mtkart.getScoreboardManager().hideAllScoreboards();
         }
     }
 }

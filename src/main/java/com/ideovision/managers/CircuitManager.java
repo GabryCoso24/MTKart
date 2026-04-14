@@ -9,7 +9,6 @@ import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -112,6 +111,11 @@ public class CircuitManager {
 
     public static File getCircuitFolder(){
         return CIRCUITS_FOLDER;
+    }
+
+    public static boolean deleteCircuit(String name) {
+        File file = new File(CIRCUITS_FOLDER, name + ".yml");
+        return file.exists() && file.delete();
     }
 
     // === GRIGLIA DI PARTENZA ===
